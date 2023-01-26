@@ -1,16 +1,6 @@
 import re
 import pandas as pd
-
-
-def csv_to_pandas():
-    report_path = input("Please paste path to your jira.csv file: ")
-    report_path = report_path.replace('"', '')
-    try:
-        pd_listings_report = pd.read_csv(report_path)
-    except FileNotFoundError:
-        print("Enter correct file path")
-        csv_to_pandas()
-    return pd_listings_report
+import title_scrape_functions as tsf
 
 
 def match_regex(string, text):
@@ -36,7 +26,7 @@ def search_images(string):
         return result.group(0)
 
 
-jira_report = csv_to_pandas()
+jira_report = tsf.csv_to_pandas()
 
 parsed_report = pd.DataFrame()
 
