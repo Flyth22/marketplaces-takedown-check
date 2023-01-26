@@ -5,7 +5,11 @@ import pandas as pd
 def csv_to_pandas():
     report_path = input("Please paste path to your jira.csv file: ")
     report_path = report_path.replace('"', '')
-    pd_listings_report = pd.read_csv(report_path)
+    try:
+        pd_listings_report = pd.read_csv(report_path)
+    except FileNotFoundError:
+        print("Enter correct file path")
+        csv_to_pandas()
     return pd_listings_report
 
 
