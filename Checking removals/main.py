@@ -25,18 +25,13 @@ Enter number and press enter:""")
 scripts_dictionary = {1: "Blacklisted.py",
                       2: "Jira_parse.py",
                       3: "TitleScrape.py"}
-s = choose_script()
+chosen_script = choose_script()
 
-if s == 1:
+if chosen_script == 1:
     import Blacklisted
-if s == 2:
+if chosen_script == 2:
     import Jira_parse
-if s == 3:
-    import TitlScrape
+if chosen_script == 3:
+    import TitleScrape
 else:
-    print("something went wrong")
-
-
-
-
-
+    print("Something went wrong, try again")

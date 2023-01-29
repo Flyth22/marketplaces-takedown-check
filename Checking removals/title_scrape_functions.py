@@ -105,7 +105,7 @@ def show_blacklisted(thrash, accepted, number_of_words=50, error_boundary=0):
 
 
 def excel_from_dataframe(dataframe, name):
-    filename = name + time.strftime("%Y%m%d-%H%M%S")
+    filename = name + time.strftime("%Y%m%d_%H%M%S")
     return dataframe.to_excel(filename + ".xlsx", index=False)
 
 
