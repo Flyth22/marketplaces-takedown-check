@@ -2,6 +2,7 @@ from title_scrape_functions import excel_to_pandas
 from title_scrape_functions import excel_from_dataframe
 import asyncio
 import tqdm.asyncio
+import tqdm
 import aiohttp
 import pandas as pd
 import time
@@ -14,12 +15,12 @@ pd_listings_report = excel_to_pandas()
 my_timeout = aiohttp.ClientTimeout(
     total=None,  # default value is 5 minutes, set to `None` for unlimited timeout
     sock_connect=10,  # How long to wait before an open socket allowed to connect
-    sock_read=10  # How long to wait with no data being read before timing out
+    sock_read=20  # How long to wait with no data being read before timing out
 )
 
 
 async def scrape(url):
-    connector = aiohttp.TCPConnector(limit_per_host=70)
+    connector = aiohttp.TCPConnector(limit_per_host=10, limit=10)
     client = aiohttp.ClientSession(timeout=my_timeout, connector=connector)
     async with client as session:
         try:
@@ -31,9 +32,13 @@ async def scrape(url):
                 # count_active_tasks = len(asyncio.all_tasks())
                 # print(count_active_tasks)
                 return title, scraped_url
+
+        # Exception noted for future inspection
         except (aiohttp.client_exceptions.ClientOSError, AttributeError, RuntimeError,
                 aiohttp.client_exceptions.ServerTimeoutError, aiohttp.client_exceptions.ServerDisconnectedError,
                 aiohttp.client_exceptions.ClientPayloadError, UnicodeDecodeError) as err:
+            return err, err
+        except Exception as err:
             return err, err
 
 
@@ -41,7 +46,7 @@ async def main():
     start_time = time.time()
     tasks = []
     for url in pd_listings_report["URL"]:
-        task = asyncio.create_task(scrape(url))
+        task = asyncio.ensure_future(scrape(url))
         tasks.append(task)
     print(len(tasks))
     print('Saving the output of extracted information')
@@ -61,3 +66,5 @@ pd_listings_report['Page_title'] = pd_listings_report['result'].apply(lambda x: 
 pd_listings_report['scraped_url'] = pd_listings_report['result'].apply(lambda x: list(x)[1])
 
 excel_from_dataframe(pd_listings_report, "scraped_titles_")
+
+input("Program finished! Thank you")

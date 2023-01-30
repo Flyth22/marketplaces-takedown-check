@@ -1,4 +1,4 @@
-import subprocess
+import openpyxl
 
 
 def choose_script():
@@ -14,7 +14,7 @@ def choose_script():
         return choose_script()
 
 
-print("""Welcome to my work helper, here are current functions:
+print("""Welcome to my work helper, here are the current functions:
 1. Check blacklisted keywords in a project
 2. Parse Jira.csv file
 3. Scrape titles and urls to check for removals
@@ -35,3 +35,4 @@ if chosen_script == 3:
     import TitleScrape
 else:
     print("Something went wrong, try again")
+

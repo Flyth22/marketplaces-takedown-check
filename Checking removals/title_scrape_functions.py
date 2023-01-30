@@ -15,6 +15,7 @@ def csv_to_pandas():
     except FileNotFoundError:
         print("Enter correct file path")
         csv_to_pandas()
+    # add exception for wrong file format
 
 
 def excel_to_pandas():
@@ -27,16 +28,16 @@ def excel_to_pandas():
     except FileNotFoundError:
         print("Enter correct file path")
         excel_to_pandas()
-    #file_name = "extracted_" + str(report_path.split('\\')[-1])
+    # add exception for wrong file format
 
 
-def loop_counter(pdframe):
+def loop_counter(pdframe):  # used to count loops in old Title Scrape code
     a = pdframe.name
     if a <= 10 or (a <= 100 and a % 10 == 0) or (a <= 1000 and a % 100 == 0):
         print("finished scraping %s listings" % str(a))
 
 
-def extract_title(pdframe):
+def extract_title(pdframe):  # old title scrape code, it was replaced by async requests
     url = pdframe['URL']
     og_url = "not found"
 
@@ -58,7 +59,9 @@ def extract_title(pdframe):
     return pdframe
 
 
-'''def check_removals(pdframe):
+'''
+# Sketch for future implementation of marketplace-specific scraping
+def check_removals(pdframe): 
     pdframe[['page title', 'page url', 'out of stock text', 'is listing removed?']] = None, None, None, None
     pdframe = pdframe.sort_values(by="Site")
     marketplaces = pdframe["Site"].unique().tolist()

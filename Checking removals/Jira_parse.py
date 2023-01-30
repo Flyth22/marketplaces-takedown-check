@@ -4,19 +4,19 @@ import title_scrape_functions as tsf
 
 
 def match_regex(string, text):
-    pattern = r'(?<=' + re.escape(text) + r'..).*'
+    pattern = r'(?<=' + re.escape(text) + r'.).*'
     result = re.search(pattern, string)
     if result:
         return result.group(0)
 
 
 def find_id(string):
-    ID = match_regex(string, text=":")
-    if ID:
-        return ID
+    id = match_regex(string, text=":")
+    if id:
+        return id
     else:
-        ID = match_regex(string, text="Takedown request for")
-        return ID
+        id = match_regex(string, text="Takedown request for")
+        return id
 
 
 def search_images(string):
@@ -35,7 +35,7 @@ description_data = ["Project name", "Marketplace name", "Removal reason", "Selle
 
 parsed_report["ID"] = jira_report['Summary'].apply(find_id)
 for name in description_data:
-    parsed_report[name] = jira_report['Description'].apply(match_regex, text=name)
+    parsed_report[name] = jira_report['Description'].apply(match_regex, text=name+":")
 parsed_report["Image"] = jira_report['Description'].apply(search_images)
 
 tsf.excel_from_dataframe(parsed_report, "jira_" + parsed_report["Project name"][0] + "_")
