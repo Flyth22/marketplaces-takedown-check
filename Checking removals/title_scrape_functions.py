@@ -22,7 +22,7 @@ def excel_to_pandas():
     report_path = input("Please paste path to your report excel file and press enter: ")
     report_path = report_path.replace('"', '')
     try:
-        pd_listings_report = pd.read_excel(report_path, header=4, usecols=[i for i in range(11) if i != 0],
+        pd_listings_report = pd.read_excel(report_path, usecols=[i for i in range(11) if i != 0],
                                            engine='openpyxl')
         return pd_listings_report
     except FileNotFoundError:
