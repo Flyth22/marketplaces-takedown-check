@@ -20,7 +20,7 @@ def find_id(string):
 
 
 def search_images(string):
-    pattern = re.escape("https://marketplace.b-cdn.net/") + r'.*?' + r'webp'
+    pattern = re.escape("https://marketplace.b-cdn.net/") + r'.*'
     result = re.search(pattern, string)
     if result:
         return result.group(0)
@@ -34,9 +34,10 @@ description_data = ["Project name", "Marketplace name", "Removal reason", "Selle
                     "Internal listing ID", "Tags"]
 
 parsed_report["ID"] = jira_report['Summary'].apply(find_id)
+parsed_report["Status"] = jira_report['Status']
 for name in description_data:
     parsed_report[name] = jira_report['Description'].apply(match_regex, text=name+":")
-parsed_report["Image"] = jira_report['Description'].apply(search_images)
+parsed_report["Images"] = jira_report['Description'].apply(search_images)
 
 tsf.excel_from_dataframe(parsed_report, "jira_" + parsed_report["Project name"][0] + "_")
 

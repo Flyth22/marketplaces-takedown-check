@@ -7,6 +7,7 @@ import aiohttp
 import pandas as pd
 import time
 from bs4 import BeautifulSoup
+import os
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
@@ -14,14 +15,14 @@ pd_listings_report = excel_to_pandas()
 
 my_timeout = aiohttp.ClientTimeout(
     total=None,  # default value is 5 minutes, set to `None` for unlimited timeout
-    sock_connect=10,  # How long to wait before an open socket allowed to connect
-    sock_read=20  # How long to wait with no data being read before timing out
+    sock_connect=60,  # How long to wait before an open socket allowed to connect
+    sock_read=30  # How long to wait with no data being read before timing out
 )
 
 
 async def scrape(url):
     connector = aiohttp.TCPConnector(limit_per_host=10, limit=10)
-    client = aiohttp.ClientSession(timeout=my_timeout, connector=connector)
+    client = aiohttp.ClientSession(timeout=my_timeout, connector=connector, trust_env=True)
     async with client as session:
         try:
             async with session.get(url) as resp:
@@ -62,9 +63,10 @@ loop = asyncio.ProactorEventLoop()
 asyncio.set_event_loop(loop)
 loop.run_until_complete(main())
 
-pd_listings_report['Page_title'] = pd_listings_report['result'].apply(lambda x: list(x)[0])
-pd_listings_report['scraped_url'] = pd_listings_report['result'].apply(lambda x: list(x)[1])
-
+pd_listings_report['PAGE_TITLE'] = pd_listings_report['result'].apply(lambda x: list(x)[0])
+pd_listings_report['SCRAPED_URL'] = pd_listings_report['result'].apply(lambda x: list(x)[1])
+pd_listings_report = pd_listings_report.drop(['result'], axis=1)
 excel_from_dataframe(pd_listings_report, "scraped_titles_")
+
 
 input("Program finished! Thank you")
