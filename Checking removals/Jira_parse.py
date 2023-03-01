@@ -11,16 +11,16 @@ def match_regex(string, text):
 
 
 def find_id(string):
-    ID = match_regex(string, text=":")
-    if ID:
-        return ID
+    id = match_regex(string, text=":")
+    if id:
+        return id
     else:
-        ID = match_regex(string, text="Takedown request for")
-        return ID
+        id = match_regex(string, text="Takedown request for")
+        return id
 
 
 def search_images(string):
-    pattern = re.escape("https://marketplace.b-cdn.net/") + r'.*?' + r'webp'
+    pattern = re.escape("https://marketplace.b-cdn.net/") + r'.*'
     result = re.search(pattern, string)
     if result:
         return result.group(0)
@@ -30,19 +30,15 @@ jira_report = tsf.csv_to_pandas()
 
 parsed_report = pd.DataFrame()
 
+description_data = ["Project name", "Marketplace name", "Removal reason", "Seller name", "Url", "Platform url",
+                    "Internal listing ID", "Tags"]
 
 parsed_report["ID"] = jira_report['Summary'].apply(find_id)
-parsed_report["Project name"] = jira_report['Description'].apply(match_regex, text="Project name:")
-parsed_report["Marketplace name"] = jira_report['Description'].apply(match_regex, text="Marketplace name:")
-parsed_report["Removal reason"] = jira_report['Description'].apply(match_regex, text="Removal reason:")
-parsed_report["Seller name:"] = jira_report['Description'].apply(match_regex, text="Seller name:")
-parsed_report["Url"] = jira_report['Description'].apply(match_regex, text="Url:")
-parsed_report["Platform url"] = jira_report['Description'].apply(match_regex, text="Platform url:")
-parsed_report["Internal listing ID"] = jira_report['Description'].apply(match_regex, text="Internal listing ID:")
-parsed_report["Tags"] = jira_report['Description'].apply(match_regex, text="Tags:")
-parsed_report["Image"] = jira_report['Description'].apply(search_images)
+parsed_report["Status"] = jira_report['Status']
+for name in description_data:
+    parsed_report[name] = jira_report['Description'].apply(match_regex, text=name+":")
+parsed_report["Images"] = jira_report['Description'].apply(search_images)
 
-
-parsed_report.to_excel("jira_parsed.xlsx", index=False)
+tsf.excel_from_dataframe(parsed_report, "jira_" + parsed_report["Project name"][0] + "_")
 
 input("Program finished! Thank you")
